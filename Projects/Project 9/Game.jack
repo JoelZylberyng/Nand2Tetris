@@ -1,0 +1,175 @@
+class Game{
+	
+	field Array spikesArray;
+	field Array spikePattern;
+	field int numberOfSpikesForGame;
+	field int score;
+	field Character eitanTheHero;
+
+	constructor Game new(int gameSize, int spikesSpeed){
+		let spikesArray = Array.new(32);
+		let spikePattern = Array.new(32);
+		let score = 0;
+		let numberOfSpikesForGame = gameSize; //number of spikes is always gamesize + 1
+		
+		do createPattern();
+		do initSpikes(spikesSpeed);
+		
+		return this;
+	}
+	
+	// Initializes the random pattern array for, you can change values for different patterns and gameplay
+	method void createPattern(){
+		
+		let spikePattern[0] = 15; let spikePattern[1] = 12; let spikePattern[2] = 24; let spikePattern[3] = 0; let spikePattern[4] = 13; let spikePattern[5] = 1;
+		let spikePattern[6] = 6; let spikePattern[7] = 17; let spikePattern[8] = 19; let spikePattern[9] = 8; let spikePattern[10] = 28; let spikePattern[11] = 20;
+		let spikePattern[12] = 31; let spikePattern[13] = 22; let spikePattern[14] = 18; let spikePattern[15] = 9; let spikePattern[16] = 2; let spikePattern[17] = 5;
+		let spikePattern[18] = 30; let spikePattern[19] = 27; let spikePattern[20] = 14; let spikePattern[21] = 3; let spikePattern[22] = 7; let spikePattern[23] = 21;
+		let spikePattern[24] = 28; let spikePattern[25] = 26; let spikePattern[26] = 29; let spikePattern[27] = 4; let spikePattern[28] = 11; let spikePattern[29] = 16;
+		let spikePattern[30] = 10; let spikePattern[31] = 23;
+		
+		return;
+	}
+	
+	//initialize all the spikes of the game;
+	method void initSpikes(int spikesSpeed){
+		var int index;
+		let index = 0;
+		while (index < 32){
+			let spikesArray[index] = Spike.new(index * 16, 16, index, spikesSpeed);
+			let index = index + 1;
+		}
+		
+		return;
+	}
+	
+	// runs the game, summons random spikes according to @spikePattern
+	method void run(){
+		var int count, randomIterator, isExists, isExists2;
+		var Spike spikeToCreate, spikeToDraw;
+		var Random randomGenerator;
+		var boolean isExit;
+		var char keyPress;
+		var int i;                 
+		var Spike spikeToDraw;		
+		
+		let eitanTheHero = Character.new();
+		do Sys.wait(1000); //temp
+		
+		let isExit = false;
+		let count = 0;
+		
+		while(~(isExit)){
+			let keyPress = Keyboard.keyPressed();
+			let randomIterator = spikePattern[count];
+			let spikeToCreate = spikesArray[randomIterator];
+			let isExists2 = spikeToCreate.getExists();
+			
+			
+			
+			let i = 0;
+		
+			while(i < 32){	
+				let spikeToDraw = spikesArray[i];
+				let isExists = spikeToDraw.getExists();
+				
+				if (isDead()) {
+							do deathAnimation();
+						return;
+						}
+				
+				if (keyPress = 81) {return;} // q key
+				else{
+				
+					if (keyPress = 130){
+						do eitanTheHero.moveL();
+						if (isDead()) {
+							do deathAnimation();
+						return;
+						}
+						do eitanTheHero.moveL();
+						if (isDead()) {
+							do deathAnimation();
+						return;
+						}
+						let keyPress = 0;
+					}
+				
+					if (keyPress = 132){
+						do eitanTheHero.moveR();
+						if (isDead()) {
+							do deathAnimation();
+						return;
+						}
+						do eitanTheHero.moveR();
+						if (isDead()) {
+							do deathAnimation();
+						return;
+						}
+						let keyPress = 0;
+					}
+			
+					if (isExists = 1){
+						let score = score + spikeToDraw.move();
+					}
+					
+					do Background.setScore(score);
+					let i = i + 1;
+				}
+				
+			}
+			do Sys.wait(30); // fixes the delay when no spikes
+			
+			if (isExists2 = 0){
+					do spikeToCreate.create();
+				}
+		
+			let count = count + 1;
+			do spikeToCreate.dispose();
+			
+			if (count > numberOfSpikesForGame){
+				let count = 0;
+				}
+			
+			
+			
+		}
+		return;
+	}
+	
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method boolean isDead(){
+		var int checkerChar, checkerSpike;
+		var Spike tempSpike;
+		let checkerChar = eitanTheHero.getPlace();
+		let tempSpike = spikesArray[checkerChar];
+		let checkerSpike = tempSpike.getSpikeIsDeath();
+	
+		return (checkerChar = checkerSpike);
+	}
+
+	method void deathAnimation(){
+		var int position;
+		let position = eitanTheHero.getPlace();
+		if (position = 0){
+		do Background.drawDeathL(position);
+		return;
+		}
+		if (position = 31){
+		do Background.drawDeathR(position);
+		return;
+		}
+		do Background.drawDeathD(position);
+		return;
+		
+		
+	}
+
+	
+
+
+}

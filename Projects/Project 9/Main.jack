@@ -1,0 +1,57 @@
+class Main {
+    function void main() {
+		var Game game;
+		var boolean exit;
+		var char key;
+		var int speed, num;
+		
+		let exit = true;
+		do Background.setStart();
+		do Background.instructions();
+		//set Background
+		while(exit){
+		do Background.chooseDifficulty();
+		while((~(key = 69))  & (~(key = 77)) & (~(key = 72))){
+			let key = Keyboard.keyPressed();		
+		}
+		do Screen.clearScreen();
+		do Background.setBack();
+		
+		// initialize the game. first param is number of spikes (+1), second is their speed
+		
+		if (key = 69){
+			let speed = 10;
+			let num = 15;
+			let game = Game.new(num, speed);
+		}
+		
+		if (key = 77){
+			let speed = 5;
+			let num = 25;
+			let game = Game.new(num, speed);
+		}
+		
+		if (key = 72){
+			let speed = 1;
+			let num = 31;
+			let game = Game.new(num, speed);
+		}
+		
+		
+		//start palying the game
+		do game.run();
+		do Output.moveCursor(10,27);
+		do Output.printString("Game Over");
+		do Output.moveCursor(11,15);
+		do Output.printString("To restart press 'r', to quit press 'q'");
+		while(exit & (~(key = 82))) {
+		let key = Keyboard.keyPressed();
+		if (key = 81){let exit = false;}
+		}
+		let key = 0;
+		do game.dispose();
+		do Screen.clearScreen();
+		}
+        return;
+    }
+}

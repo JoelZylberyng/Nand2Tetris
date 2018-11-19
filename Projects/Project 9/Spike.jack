@@ -1,0 +1,390 @@
+class Spike{
+	
+	// x and y represent the coordinates of the top left pixel of the spike
+	// id is between 0-31. exists 1 for spike is spawned and 0 it isn't.
+	// spikeIsDeath equals -1 when the spike is in the air and a value between 0-32
+	// corresponding to its id if the spike is at the last row. compare spikeIsDeath to
+	// the players current square location to decide if its GameOver.
+	field int x, y, id, exists, spikeIsDeath, speed; 
+	 	
+	
+	constructor Spike new(int xLoc, int yLoc, int givenId, int spikeSpeed){
+		let x = xLoc;
+		let y = yLoc;
+		let id = givenId;
+		let exists = 0;
+		let spikeIsDeath = -1;
+		let speed = spikeSpeed;
+		return this;
+	}
+	
+	//spawns a spike
+	method void create(){
+		let exists = 1;
+		do drawCalc();
+		return;
+	}
+	
+	// returns whether this spike exists, 1 it does 0 it doesn't
+	method int getExists(){
+		return exists;
+	}
+	
+	method int getSpikeIsDeath(){return spikeIsDeath;}
+	
+   // moves the spike 2 squares down the grid
+	method int move(){
+		var int x;
+		
+		if (id = 0){
+			let x = moveLeft();
+		}
+		
+		if (id = 31){
+			let x = moveRight();
+		}
+		
+		if ((id < 31) & (id > 0)){
+			let x = moveNormal();
+		}
+		
+		return x;
+   }
+	
+	method int moveNormal(){
+		var int z;
+		let z = 0;
+		
+		if (exists = 1){
+			
+			if (y < 240){
+				
+				if (y = 208){ //the spike that will touch the bottom line
+					
+					do Spike.erase((32 * y) + (x / 16));
+					let y = y + 32;
+					do drawCalc2();
+					let spikeIsDeath = id;
+					do Sys.wait(speed);
+				}
+			
+				else{
+				
+				do Spike.erase((32 * y) + (x / 16));
+				let y = y + 32;
+				do drawCalc();
+				do Sys.wait(speed);
+				
+				}
+			}
+			
+			else{
+			
+				do Background.drawDownOne(id);
+				let z = resetSpike();
+			
+			}
+		}
+		
+	return z;
+	}
+	
+	method int moveLeft(){
+		var int z;
+		let z = 0;
+		
+		if (exists = 1){
+		
+			if (y < 240){
+				
+				if (y = 208){ // the spike that will touche the bottom line
+				
+					//do Spike.erase((32 * y) + (x / 16));
+					do Background.drawSideLL(y / 16);
+					let y = y + 32;
+					do drawCalc2();
+					let spikeIsDeath = id;
+					do Sys.wait(speed);
+				}
+			
+				else{ //all other spikes
+					
+					//do Spike.erase((32 * y) + (x / 16));
+					do Background.drawSideLL(y / 16);
+					let y = y + 32;
+					do drawCalc();
+					do Sys.wait(speed);
+				}
+			}
+			else{ //spike gone
+			
+			do Background.drawDownL(7680);
+			let z = resetSpike();
+			
+			}
+		}
+		
+		return z;
+	}
+	
+	method int moveRight(){
+		var int z;
+		let z = 0;
+		
+		if (exists = 1){
+			
+			if (y < 240){
+				
+				if (y = 208){ // the spike that will touche the bottom line
+				
+					//do Spike.erase((32 * y) + (x / 16));
+					do Background.drawSideRR(y / 16 - 1);
+					let y = y + 32;
+					do drawCalc2();
+					let spikeIsDeath = id;
+					do Sys.wait(speed);
+				}
+			
+				else{ //all other spikes
+					
+					//do Spike.erase((32 * y) + (x / 16));
+					do Background.drawSideRR(y / 16 - 1);
+					let y = y + 32;
+					do drawCalc();
+					do Sys.wait(speed);
+				}
+			}
+			
+			else{ //spike gone
+				
+				do Background.drawDownR(7711);
+				let z = resetSpike();
+			
+			}
+		}
+		
+		return z;
+	}
+	
+	//resets the spike after it touches the bottom line
+	method int resetSpike(){
+		let y = 16;
+		let exists = 0;
+		let spikeIsDeath = -1;
+		return 1;
+	}
+	
+	//frees memory if spike currently doesn't exists
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+	
+	// draws a spike that is not on the last line
+	method void drawCalc(){
+		var int location;
+		
+		if(id = 0){
+			let location = (32 * y) + (x / 16);
+			do Spike.drawL(location);
+		}
+		
+		if(id = 31){
+			let location = (32 * y) + (x / 16);
+			do Spike.drawR(location);
+		}
+		
+		if ((id > 0) & (id < 31)){
+			let location = (32 * y) + (x / 16);
+			do Spike.draw(location);
+		}
+		
+		return;
+	}
+	
+	
+	
+	// draws a spike that is on the last line
+	method void drawCalc2(){
+		var int location;
+		
+		if(id = 0){
+			let location = (32 * y) + (x / 16);
+			do Spike.drawLstLineL(location);
+		}
+		
+		if(id = 31){
+			let location = (32 * y) + (x / 16);
+			do Spike.drawLstLineR(location);
+		}
+		
+		if ((id > 0) & (id < 31)){
+			let location = (32 * y) + (x / 16);
+			do Spike.drawLstLine(location);
+		}
+		
+		return;
+	}
+		
+	function void draw(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+		do Memory.poke(memAddress+32, -30695);
+		do Memory.poke(memAddress+64, -30719);
+		do Memory.poke(memAddress+96, 17409);
+		do Memory.poke(memAddress+128, 16514);
+		do Memory.poke(memAddress+160, 16514);
+		do Memory.poke(memAddress+192, 8452);
+		do Memory.poke(memAddress+224, 8452);
+		do Memory.poke(memAddress+256, 8328);
+		do Memory.poke(memAddress+288, 8328);
+		do Memory.poke(memAddress+320, 4424);
+		do Memory.poke(memAddress+352, 2376);
+		do Memory.poke(memAddress+384, 2384);
+		do Memory.poke(memAddress+416, 1312);
+		do Memory.poke(memAddress+448, 1280);
+		do Memory.poke(memAddress+480, 512);
+		
+		return;
+	}
+	
+	function void drawL(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+	do Memory.poke(memAddress+32, -30693);
+	do Memory.poke(memAddress+64, -30717);
+	do Memory.poke(memAddress+96, 17411);
+	do Memory.poke(memAddress+128, 16515);
+	do Memory.poke(memAddress+160, 16515);
+	do Memory.poke(memAddress+192, 8455);
+	do Memory.poke(memAddress+224, 8455);
+	do Memory.poke(memAddress+256, 8331);
+	do Memory.poke(memAddress+288, 8331);
+	do Memory.poke(memAddress+320, 4427);
+	do Memory.poke(memAddress+352, 2379);
+	do Memory.poke(memAddress+384, 2387);
+	do Memory.poke(memAddress+416, 1315);
+	do Memory.poke(memAddress+448, 1283);
+	do Memory.poke(memAddress+480, 515);
+		
+		return;
+	}
+	
+	function void drawR(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+		do Memory.poke(memAddress+32, -14311);
+		do Memory.poke(memAddress+64, -14335);
+		do Memory.poke(memAddress+96, -15359);
+		do Memory.poke(memAddress+128, -16254);
+		do Memory.poke(memAddress+160, -16254);
+		do Memory.poke(memAddress+192, -7932);
+		do Memory.poke(memAddress+224, -7932);
+		do Memory.poke(memAddress+256, -8056);
+		do Memory.poke(memAddress+288, -8056);
+		do Memory.poke(memAddress+320, -11960);
+		do Memory.poke(memAddress+352, -14008);
+		do Memory.poke(memAddress+384, -14000);
+		do Memory.poke(memAddress+416, -15072);
+		do Memory.poke(memAddress+448, -15104);
+		do Memory.poke(memAddress+480, -15872);
+		
+		return;
+	}
+	
+	function void drawLstLine(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+		do Memory.poke(memAddress+32, -30695);
+		do Memory.poke(memAddress+64, -30719);
+		do Memory.poke(memAddress+96, 17409);
+		do Memory.poke(memAddress+128, 16514);
+		do Memory.poke(memAddress+160, 16514);
+		do Memory.poke(memAddress+192, 8452);
+		do Memory.poke(memAddress+224, 8452);
+		do Memory.poke(memAddress+256, 8328);
+		do Memory.poke(memAddress+288, 8328);
+		do Memory.poke(memAddress+320, 4424);
+		do Memory.poke(memAddress+352, 2376);
+		do Memory.poke(memAddress+384, 2384);
+		do Memory.poke(memAddress+416, 1312);
+		do Memory.poke(memAddress+448, 1280);
+		do Memory.poke(memAddress+480, -1);
+		
+		return;
+	}
+	
+	function void drawLstLineL(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+	do Memory.poke(memAddress+32, -30693);
+	do Memory.poke(memAddress+64, -30717);
+	do Memory.poke(memAddress+96, 17411);
+	do Memory.poke(memAddress+128, 16515);
+	do Memory.poke(memAddress+160, 16515);
+	do Memory.poke(memAddress+192, 8455);
+	do Memory.poke(memAddress+224, 8455);
+	do Memory.poke(memAddress+256, 8331);
+	do Memory.poke(memAddress+288, 8331);
+	do Memory.poke(memAddress+320, 4427);
+	do Memory.poke(memAddress+352, 2379);
+	do Memory.poke(memAddress+384, 2387);
+	do Memory.poke(memAddress+416, 1315);
+	do Memory.poke(memAddress+448, 1283);
+	do Memory.poke(memAddress+480, -1);
+		
+		return;
+	}
+	
+	function void drawLstLineR(int location){
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, -2073);
+		do Memory.poke(memAddress+32, -14311);
+		do Memory.poke(memAddress+64, -14335);
+		do Memory.poke(memAddress+96, -15359);
+		do Memory.poke(memAddress+128, -16254);
+		do Memory.poke(memAddress+160, -16254);
+		do Memory.poke(memAddress+192, -7932);
+		do Memory.poke(memAddress+224, -7932);
+		do Memory.poke(memAddress+256, -8056);
+		do Memory.poke(memAddress+288, -8056);
+		do Memory.poke(memAddress+320, -11960);
+		do Memory.poke(memAddress+352, -14008);
+		do Memory.poke(memAddress+384, -14000);
+		do Memory.poke(memAddress+416, -15072);
+		do Memory.poke(memAddress+448, -15104);
+		do Memory.poke(memAddress+480, -1);
+		
+		return;
+	}
+	
+	function void erase(int location) {
+		var int memAddress;
+		let memAddress = 16384+location;
+		do Memory.poke(memAddress+0, 0);
+		do Memory.poke(memAddress+32, 0);
+		do Memory.poke(memAddress+64, 0);
+		do Memory.poke(memAddress+96, 0);
+		do Memory.poke(memAddress+128, 0);
+		do Memory.poke(memAddress+160, 0);
+		do Memory.poke(memAddress+192, 0);
+		do Memory.poke(memAddress+224, 0);
+		do Memory.poke(memAddress+256, 0);
+		do Memory.poke(memAddress+288, 0);
+		do Memory.poke(memAddress+320, 0);
+		do Memory.poke(memAddress+352, 0);
+		do Memory.poke(memAddress+384, 0);
+		do Memory.poke(memAddress+416, 0);
+		do Memory.poke(memAddress+448, 0);
+		do Memory.poke(memAddress+480, 0);
+		return;
+	  
+   }
+	
+}

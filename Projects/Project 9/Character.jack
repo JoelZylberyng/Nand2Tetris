@@ -1,0 +1,146 @@
+
+class Character{
+	field int x, y; // screen location of the character middle down screen
+	field int direction; // 1 = right  0 = left
+	/** Constructs a new character with a given location */
+   constructor Character new() {
+      let x = 16;
+      let y = 240;
+	  let direction = 0;
+      do drawChar(1);
+      return this;
+   }
+	method void drawChar(int dir){
+	let direction = dir;
+	do Character.drawCharR(7696);
+	return;
+	}
+	
+	method int getPlace(){return x;}
+	
+	function void drawCharR(int location) {
+	var int memAddress;
+	let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, 496);
+	do Memory.poke(memAddress+32, 636);
+	do Memory.poke(memAddress+64, 588);
+	do Memory.poke(memAddress+96, 834);
+	do Memory.poke(memAddress+128, 3128);
+	do Memory.poke(memAddress+160, 12324);
+	do Memory.poke(memAddress+192, 18514);
+	do Memory.poke(memAddress+224, -19406);
+	do Memory.poke(memAddress+256, 26620);
+	do Memory.poke(memAddress+288, 2064);
+	do Memory.poke(memAddress+320, 2448);
+	do Memory.poke(memAddress+352, 4680);
+	do Memory.poke(memAddress+384, 7800);
+	do Memory.poke(memAddress+416, 4680);
+	do Memory.poke(memAddress+448, 8772);
+	do Memory.poke(memAddress+480, -1);
+	return;
+	}
+	
+	function void drawCharL(int location) {
+	var int memAddress;
+	let memAddress = 16384+location;
+	do Memory.poke(memAddress+0, 3968);
+	do Memory.poke(memAddress+32, 15936);
+	do Memory.poke(memAddress+64, 12864);
+	do Memory.poke(memAddress+96, 17088);
+	do Memory.poke(memAddress+128, 7216);
+	do Memory.poke(memAddress+160, 9228);
+	do Memory.poke(memAddress+192, 18962);
+	do Memory.poke(memAddress+224, 19501);
+	do Memory.poke(memAddress+256, 16358);
+	do Memory.poke(memAddress+288, 2064);
+	do Memory.poke(memAddress+320, 2448);
+	do Memory.poke(memAddress+352, 4680);
+	do Memory.poke(memAddress+384, 7800);
+	do Memory.poke(memAddress+416, 4680);
+	do Memory.poke(memAddress+448, 8772);
+	do Memory.poke(memAddress+480, -1);
+	return;
+	}
+	
+	method void moveR(){
+		var int memAddress;
+		if (x = 0){
+			let x = x+1;
+			do Background.drawDownL(7680);
+			do Character.drawCharR(7681);
+			return;
+		}
+		if (x < 30){
+		do Background.drawDownOne(x);
+		let x = x + 1;
+		do Character.drawCharR(7680 + x);
+		return;
+		}
+		if (x = 30){
+				do Background.drawDownOne(x);
+				let memAddress = 16384+7711;
+				do Memory.poke(memAddress+0, -12320);
+				do Memory.poke(memAddress+32, -13024);
+				do Memory.poke(memAddress+64, -14304);
+				do Memory.poke(memAddress+96, -13536);
+				do Memory.poke(memAddress+128, -14304);
+				do Memory.poke(memAddress+160, -13216);
+				do Memory.poke(memAddress+192, -15488);
+				do Memory.poke(memAddress+224, -8);
+				do Memory.poke(memAddress+256, -3176);
+				do Memory.poke(memAddress+288, -16128);
+				do Memory.poke(memAddress+320, -14400);
+				do Memory.poke(memAddress+352, -13408);
+				do Memory.poke(memAddress+384, -14048);
+				do Memory.poke(memAddress+416, -14304);
+				do Memory.poke(memAddress+448, -1992);
+				do Memory.poke(memAddress+480, -1);
+				let x = 31;
+				return;
+				}
+		return;
+	}
+	
+		method void moveL(){
+		var int memAddress;
+		if (x = 31){
+			let x = x-1;
+			do Background.drawDownR(7711);
+			do Character.drawCharL(7710);
+			return;
+		}
+		if (x > 1){
+		do Background.drawDownOne(x);
+		let x = x - 1;
+		do Character.drawCharL(7680 + x);
+		return;
+		}
+		if (x = 1){
+				do Background.drawDownOne(x);
+				let x = 0;
+				let memAddress = 16384+7680;
+				do Memory.poke(memAddress+0, 2035);
+				do Memory.poke(memAddress+32, 1203);
+				do Memory.poke(memAddress+64, 1043);
+				do Memory.poke(memAddress+96, 1235);
+				do Memory.poke(memAddress+128, 1043);
+				do Memory.poke(memAddress+160, 1587);
+				do Memory.poke(memAddress+192, 451);
+				do Memory.poke(memAddress+224, 8191);
+				do Memory.poke(memAddress+256, 6607);
+				do Memory.poke(memAddress+288, 131);
+				do Memory.poke(memAddress+320, 995);
+				do Memory.poke(memAddress+352, 1491);
+				do Memory.poke(memAddress+384, 1171);
+				do Memory.poke(memAddress+416, 1043);
+				do Memory.poke(memAddress+448, 7199);
+				do Memory.poke(memAddress+480, -1);
+				return;
+		}
+		return;
+		}
+
+
+
+
+}

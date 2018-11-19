@@ -1,5 +1,6 @@
 # Nand2Tetris
-my projects for the Nand2Testris course, written in Java.
+my projects for the Nand2Testris course, written in Java.<br/>
+You'll need the tools and instructions from the site in order to use these files.<br/>
 
 Nand2Tetris website: http://nand2tetris.org/
 
